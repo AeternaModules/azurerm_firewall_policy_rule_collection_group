@@ -62,11 +62,11 @@ EOT
     firewall_policy_id = string
     name               = string
     priority           = number
-    application_rule_collection = optional(object({
+    application_rule_collection = optional(list(object({
       action   = string
       name     = string
       priority = number
-      rule = object({
+      rule = list(object({
         description           = optional(string)
         destination_addresses = optional(list(string))
         destination_fqdn_tags = optional(list(string))
@@ -85,13 +85,13 @@ EOT
         source_ip_groups = optional(list(string))
         terminate_tls    = optional(bool)
         web_categories   = optional(list(string))
-      })
-    }))
-    nat_rule_collection = optional(object({
+      }))
+    })))
+    nat_rule_collection = optional(list(object({
       action   = string
       name     = string
       priority = number
-      rule = object({
+      rule = list(object({
         description         = optional(string)
         destination_address = optional(string)
         destination_ports   = optional(list(string))
@@ -102,13 +102,13 @@ EOT
         translated_address  = optional(string)
         translated_fqdn     = optional(string)
         translated_port     = number
-      })
-    }))
-    network_rule_collection = optional(object({
+      }))
+    })))
+    network_rule_collection = optional(list(object({
       action   = string
       name     = string
       priority = number
-      rule = object({
+      rule = list(object({
         description           = optional(string)
         destination_addresses = optional(list(string))
         destination_fqdns     = optional(list(string))
@@ -118,8 +118,56 @@ EOT
         protocols             = list(string)
         source_addresses      = optional(list(string))
         source_ip_groups      = optional(list(string))
-      })
-    }))
+      }))
+    })))
   }))
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_policy_rule_collection_groups : (
+        v.application_rule_collection == null || (length(v.application_rule_collection) >= 1)
+      )
+    ])
+    error_message = "Each application_rule_collection list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_policy_rule_collection_groups : (
+        v.application_rule_collection == null || alltrue([for item in v.application_rule_collection : (length(item.rule) >= 1)])
+      )
+    ])
+    error_message = "Each rule list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_policy_rule_collection_groups : (
+        v.nat_rule_collection == null || (length(v.nat_rule_collection) >= 1)
+      )
+    ])
+    error_message = "Each nat_rule_collection list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_policy_rule_collection_groups : (
+        v.nat_rule_collection == null || alltrue([for item in v.nat_rule_collection : (length(item.rule) >= 1)])
+      )
+    ])
+    error_message = "Each rule list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_policy_rule_collection_groups : (
+        v.network_rule_collection == null || (length(v.network_rule_collection) >= 1)
+      )
+    ])
+    error_message = "Each network_rule_collection list must contain at least 1 items"
+  }
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_policy_rule_collection_groups : (
+        v.network_rule_collection == null || alltrue([for item in v.network_rule_collection : (length(item.rule) >= 1)])
+      )
+    ])
+    error_message = "Each rule list must contain at least 1 items"
+  }
 }
 
