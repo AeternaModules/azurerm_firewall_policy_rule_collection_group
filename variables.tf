@@ -169,5 +169,148 @@ EOT
     ])
     error_message = "Each rule list must contain at least 1 items"
   }
+  validation {
+    condition = alltrue([
+      for k, v in var.firewall_policy_rule_collection_groups : (
+        v.priority >= 100 && v.priority <= 65000
+      )
+    ])
+    error_message = "must be between 100 and 65000"
+  }
+  # --- Unconfirmed validation candidates, derived from azurerm_firewall_policy_rule_collection_group's provider source ---
+  # Not auto-enabled: either a bespoke provider validator we can't safely translate,
+  # or a path that crosses a list-typed block (needs its own for_each wrapping).
+  # Review, translate into a real validation{} block above, and delete once confirmed.
+  # path: name
+  #   source:    validate.FirewallPolicyRuleCollectionGroupName: no recognizable `if ... { errors = append(...) }` pattern - read it by hand
+  # path: firewall_policy_id
+  #   source:    [from firewallpolicies.ValidateFirewallPolicyID] !ok
+  # path: firewall_policy_id
+  #   source:    [from firewallpolicies.ValidateFirewallPolicyID] err != nil
+  # path: application_rule_collection.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.priority
+  #   condition: value >= 100 && value <= 65000
+  #   message:   must be between 100 and 65000
+  # path: application_rule_collection.action
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: application_rule_collection.rule.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.description
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.protocols.type
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: application_rule_collection.rule.protocols.port
+  #   condition: value >= 0 && value <= 64000
+  #   message:   must be between 0 and 64000
+  # path: application_rule_collection.rule.http_headers.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.http_headers.value
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.source_addresses[*]
+  #   source:    validation.Any(...) - no translation rule yet, add one
+  # path: application_rule_collection.rule.source_ip_groups[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.destination_addresses[*]
+  #   source:    validation.Any(...) - no translation rule yet, add one
+  # path: application_rule_collection.rule.destination_fqdns[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.destination_urls[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.destination_fqdn_tags[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: application_rule_collection.rule.web_categories[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.priority
+  #   condition: value >= 100 && value <= 65000
+  #   message:   must be between 100 and 65000
+  # path: network_rule_collection.action
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: network_rule_collection.rule.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.rule.description
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.rule.protocols[*]
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: network_rule_collection.rule.source_addresses[*]
+  #   source:    validation.Any(...) - no translation rule yet, add one
+  # path: network_rule_collection.rule.source_ip_groups[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.rule.destination_addresses[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.rule.destination_ip_groups[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.rule.destination_fqdns[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: network_rule_collection.rule.destination_ports[*]
+  #   source:    validation.Any(...) - no translation rule yet, add one
+  # path: nat_rule_collection.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: nat_rule_collection.priority
+  #   condition: value >= 100 && value <= 65000
+  #   message:   must be between 100 and 65000
+  # path: nat_rule_collection.action
+  #   condition: contains(["Dnat"], value)
+  #   message:   must be one of: Dnat
+  # path: nat_rule_collection.rule.name
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: nat_rule_collection.rule.description
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: nat_rule_collection.rule.protocols[*]
+  #   source:    validation.StringInSlice value list is not a literal []string - likely a generated PossibleValuesFor*() helper; resolve separately
+  # path: nat_rule_collection.rule.source_addresses[*]
+  #   source:    validation.Any(...) - no translation rule yet, add one
+  # path: nat_rule_collection.rule.source_ip_groups[*]
+  #   condition: length(value) > 0
+  #   message:   must not be empty
+  # path: nat_rule_collection.rule.destination_address
+  #   source:    validation.Any(...) - no translation rule yet, add one
+  # path: nat_rule_collection.rule.destination_ports[*]
+  #   source:    [from validate.PortOrPortRangeWithin] !ok
+  # path: nat_rule_collection.rule.destination_ports[*]
+  #   condition: length(value) == 5
+  #   message:   [from validate.PortOrPortRangeWithin: invalid when len(value) != 5]
+  #   source:    [from validate.PortOrPortRangeWithin: invalid when len(value) != 5]
+  # path: nat_rule_collection.rule.destination_ports[*]
+  #   condition: length(value) > 0
+  #   message:   [from validate.PortOrPortRangeWithin: invalid when value == ""]
+  #   source:    [from validate.PortOrPortRangeWithin: invalid when value == ""]
+  # path: nat_rule_collection.rule.destination_ports[*]
+  #   source:    [from validate.PortOrPortRangeWithin] err != nil
+  # path: nat_rule_collection.rule.destination_ports[*]
+  #   source:    [from validate.PortOrPortRangeWithin] p1 >= p2
+  # path: nat_rule_collection.rule.destination_ports[*]
+  #   source:    [from validate.PortOrPortRangeWithin] err != nil
+  # path: nat_rule_collection.rule.destination_ports[*]
+  #   source:    [from validate.PortOrPortRangeWithin] err != nil
+  # path: nat_rule_collection.rule.translated_address
+  #   source:    validation.IsIPAddress(...) - no translation rule yet, add one
+  # path: nat_rule_collection.rule.translated_port
+  #   source:    validation.IsPortNumber(...) - no translation rule yet, add one
+  # path: nat_rule_collection.rule.translated_fqdn
+  #   condition: length(value) > 0
+  #   message:   must not be empty
 }
 
