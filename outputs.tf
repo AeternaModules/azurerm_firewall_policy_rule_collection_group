@@ -1,3 +1,7 @@
+output "firewall_policy_rule_collection_groups_id" {
+  description = "Map of id values across all firewall_policy_rule_collection_groups, keyed the same as var.firewall_policy_rule_collection_groups"
+  value       = { for k, v in azurerm_firewall_policy_rule_collection_group.firewall_policy_rule_collection_groups : k => v.id }
+}
 output "firewall_policy_rule_collection_groups_application_rule_collection" {
   description = "Map of application_rule_collection values across all firewall_policy_rule_collection_groups, keyed the same as var.firewall_policy_rule_collection_groups"
   value       = { for k, v in azurerm_firewall_policy_rule_collection_group.firewall_policy_rule_collection_groups : k => v.application_rule_collection }
