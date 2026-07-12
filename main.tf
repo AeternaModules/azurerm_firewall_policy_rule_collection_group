@@ -20,7 +20,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "firewall_policy_rule_c
           destination_fqdns     = rule.value.destination_fqdns
           destination_urls      = rule.value.destination_urls
           dynamic "http_headers" {
-            for_each = rule.value.http_headers != null ? [rule.value.http_headers] : []
+            for_each = rule.value.http_headers != null ? rule.value.http_headers : []
             content {
               name  = http_headers.value.name
               value = http_headers.value.value
@@ -28,7 +28,7 @@ resource "azurerm_firewall_policy_rule_collection_group" "firewall_policy_rule_c
           }
           name = rule.value.name
           dynamic "protocols" {
-            for_each = rule.value.protocols != null ? [rule.value.protocols] : []
+            for_each = rule.value.protocols != null ? rule.value.protocols : []
             content {
               port = protocols.value.port
               type = protocols.value.type

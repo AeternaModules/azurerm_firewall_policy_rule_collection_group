@@ -72,15 +72,15 @@ EOT
         destination_fqdn_tags = optional(list(string))
         destination_fqdns     = optional(list(string))
         destination_urls      = optional(list(string))
-        http_headers = optional(object({
+        http_headers = optional(list(object({
           name  = string
           value = string
-        }))
+        })))
         name = string
-        protocols = optional(object({
+        protocols = optional(list(object({
           port = number
           type = string
-        }))
+        })))
         source_addresses = optional(list(string))
         source_ip_groups = optional(list(string))
         terminate_tls    = optional(bool)
@@ -169,14 +169,6 @@ EOT
     ])
     error_message = "Each rule list must contain at least 1 items"
   }
-  validation {
-    condition = alltrue([
-      for k, v in var.firewall_policy_rule_collection_groups : (
-        v.priority >= 100 && v.priority <= 65000
-      )
-    ])
-    error_message = "must be between 100 and 65000"
-  }
   # --- Unconfirmed validation candidates, derived from azurerm_firewall_policy_rule_collection_group's provider source ---
   # Not auto-enabled: either a bespoke provider validator we can't safely translate,
   # or a path that crosses a list-typed block (needs its own for_each wrapping).
@@ -187,6 +179,9 @@ EOT
   #   source:    [from firewallpolicies.ValidateFirewallPolicyID] !ok
   # path: firewall_policy_id
   #   source:    [from firewallpolicies.ValidateFirewallPolicyID] err != nil
+  # path: priority
+  #   condition: value >= 100 && value <= 65000
+  #   message:   must be between 100 and 65000
   # path: application_rule_collection.name
   #   condition: length(value) > 0
   #   message:   must not be empty
