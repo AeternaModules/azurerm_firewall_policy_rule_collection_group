@@ -124,14 +124,6 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.firewall_policy_rule_collection_groups : (
-        v.application_rule_collection == null || (length(v.application_rule_collection) >= 1)
-      )
-    ])
-    error_message = "Each application_rule_collection list must contain at least 1 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.firewall_policy_rule_collection_groups : (
         v.application_rule_collection == null || alltrue([for item in v.application_rule_collection : (length(item.rule) >= 1)])
       )
     ])
@@ -140,26 +132,10 @@ EOT
   validation {
     condition = alltrue([
       for k, v in var.firewall_policy_rule_collection_groups : (
-        v.nat_rule_collection == null || (length(v.nat_rule_collection) >= 1)
-      )
-    ])
-    error_message = "Each nat_rule_collection list must contain at least 1 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.firewall_policy_rule_collection_groups : (
         v.nat_rule_collection == null || alltrue([for item in v.nat_rule_collection : (length(item.rule) >= 1)])
       )
     ])
     error_message = "Each rule list must contain at least 1 items"
-  }
-  validation {
-    condition = alltrue([
-      for k, v in var.firewall_policy_rule_collection_groups : (
-        v.network_rule_collection == null || (length(v.network_rule_collection) >= 1)
-      )
-    ])
-    error_message = "Each network_rule_collection list must contain at least 1 items"
   }
   validation {
     condition = alltrue([
